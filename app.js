@@ -1,15 +1,26 @@
+const express = require('express');
+const app = express();
 // 引用linebot SDK
-var linebot = require('linebot');
+const linebot = require('linebot');
 
 const channelData = require('./config/config').channelData;
 
 // 用於辨識Line Channel的資訊
-var bot = linebot(channelData);
+const bot = linebot(channelData);
+const linebotParser = bot.parser();
 
 // 被加入好友
 bot.on('follow', async (event) => {
     console.log(event);
-    event.reply('感謝將我加為好友')
+
+    // 取得 user profile
+    event.source.profile().then(function (profile) {
+        console.log(profile);
+
+        event.reply(`Hi, ${ profile.displayName }，感謝將我加為好友!`);
+    });
+
+    // event.reply('感謝將我加為好友')
 })
 
 // 被解除好友
@@ -33,7 +44,7 @@ bot.on('leave', async (event) => {
 // 有人加入群組/聊天室
 bot.on('memberJoined', async (event) => {
     console.log(event);
-    event.reply('被踢出群組了 QQ')
+    event.reply('歡迎加入群組 ^^')
 })
 
 // 有人離開群組/聊天室
@@ -71,7 +82,7 @@ bot.on('message', function (event) {
         }).catch(function (error) {
             // 當訊息回傳失敗後的處理 
         });
-    } else if (userText = 'template') {
+    } else if (userText == 'template') {
         var replyMsg = {
             "type": "template",
             "altText": "this is a buttons template",
@@ -103,8 +114,18 @@ bot.on('message', function (event) {
         });
     }
 });
+
+// 推播
+app.get('/pushMsg', (req, res) => {
+    bot.push('U349dc7aa41a64c63aa27e6f31159f71a', '這是一個Push msg'); // (userId, msg content)
+
+    res.send('success');
+})
+
 // Bot所監聽的webhook路徑與port
-bot.listen('/linewebhook', 3000, function () {
-    console.log('Server is up on 3000.');
+app.post('/linewebhook', linebotParser);
+
+app.listen(3000, () => {
     console.log('[BOT已準備就緒]');
+    console.log('Server started on port 3000');
 });
