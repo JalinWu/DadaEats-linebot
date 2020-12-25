@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const axios = require('axios');
 // 引用linebot SDK
 const linebot = require('linebot');
 
@@ -17,7 +18,20 @@ bot.on('follow', async (event) => {
     event.source.profile().then(function (profile) {
         console.log(profile);
 
-        event.reply(`Hi, ${ profile.displayName }，感謝將我加為好友!`);
+        axios.post('https://dadaeats.herokuapp.com/users/register', {
+            name: profile.displayName,
+            account: profile.userId,
+            password: profile.userId,
+            password2: profile.userId
+        })
+        .then(function (response) {
+            console.log('success');
+        })
+        .catch(function (error) {
+            console.log('error');
+        });
+
+        event.reply(`Hi, ${profile.displayName}，感謝將我加為好友!`);
     });
 
     // event.reply('感謝將我加為好友')
@@ -90,18 +104,18 @@ bot.on('message', function (event) {
                 "type": "buttons",
                 "thumbnailImageUrl": "https://www.cosmopolitan.com.hk/var/cosmopolitanhk/storage/images/entertainment/gakki/1/1746435-1-chi-HK/1_img_750_h.jpg",
                 "imageBackgroundColor": "#F7F7F7",
-                "title": "標題",
-                "text": "文字",
+                "title": "♪★♫❣☆♣",
+                "text": "text",
                 "actions": [
                     {
-                        "type": "message",
-                        "label": "動作 1",
-                        "text": "動作 1"
+                        "type": "uri",
+                        "label": "前往 DadaEats",
+                        "uri": "https://liff.line.me/1654985474-1K5daZn5"
                     },
                     {
-                        "type": "message",
-                        "label": "動作 2",
-                        "text": "動作 2"
+                        "type": "uri",
+                        "label": "查看購物車",
+                        "uri": "https://liff.line.me/1654985474-wErn6kGr"
                     }
                 ]
             }
