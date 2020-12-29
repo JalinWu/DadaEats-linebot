@@ -139,6 +139,10 @@ app.get('/pushMsg', (req, res) => {
 // Bot所監聽的webhook路徑與port
 app.post('/linewebhook', linebotParser);
 
+app.get('/', (req, res) => {
+    res.send('HelloWorld!');
+})
+
 app.listen(3000, () => {
     console.log('[BOT已準備就緒]');
     console.log('Server started on port 3000');
