@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const axios = require('axios');
+const bodyParser = require('body-parser');
 // 引用linebot SDK
 const linebot = require('linebot');
 
@@ -9,6 +10,12 @@ const channelData = require('./config/config').channelData;
 // 用於辨識Line Channel的資訊
 const bot = linebot(channelData);
 const linebotParser = bot.parser();
+
+// parse application/x-www-form-urlencoded
+// app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+// app.use(bodyParser.json())
 
 // 被加入好友
 bot.on('follow', async (event) => {
@@ -24,14 +31,45 @@ bot.on('follow', async (event) => {
             password: profile.userId,
             password2: profile.userId
         })
-        .then(function (response) {
-            console.log('success');
-        })
-        .catch(function (error) {
-            console.log('error');
+            .then(function (response) {
+                console.log('success');
+            })
+            .catch(function (error) {
+                console.log('error');
+            });
+
+        // event.reply(`Hi, ${profile.displayName}，感謝將我加為好友!`);
+
+        var replyMsg = {
+            "type": "template",
+            "altText": "DadaEats有新消息囉！",
+            "template": {
+                "type": "buttons",
+                "thumbnailImageUrl": "https://www.cosmopolitan.com.hk/var/cosmopolitanhk/storage/images/entertainment/gakki/1/1746435-1-chi-HK/1_img_750_h.jpg",
+                "imageBackgroundColor": "#F7F7F7",
+                "title": "最棒的團體訂餐平台",
+                "text": "↓↓↓快快點選前往↓↓↓",
+                "actions": [
+                    {
+                        "type": "uri",
+                        "label": "前往 DadaEats",
+                        "uri": "https://liff.line.me/1654985474-1K5daZn5"
+                    },
+                    {
+                        "type": "uri",
+                        "label": "查看購物車",
+                        "uri": "https://liff.line.me/1654985474-wErn6kGr"
+                    }
+                ]
+            }
+        }
+        // 透過event.reply(要回傳的訊息)方法將訊息回傳給使用者 
+        event.reply(replyMsg).then(function (data) {
+            // 當訊息成功回傳後的處理 
+        }).catch(function (error) {
+            // 當訊息回傳失敗後的處理 
         });
 
-        event.reply(`Hi, ${profile.displayName}，感謝將我加為好友!`);
     });
 
     // event.reply('感謝將我加為好友')
@@ -130,8 +168,12 @@ bot.on('message', function (event) {
 });
 
 // 推播
-app.get('/pushMsg', (req, res) => {
-    bot.push('U349dc7aa41a64c63aa27e6f31159f71a', '這是一個Push msg'); // (userId, msg content)
+app.post('/pushMsg', (req, res) => { // 目前無法使用，body-parser cannot use
+    const { userIds, msg } = req.body;
+
+    userIds.forEach(userId => {
+        bot.push(userId, msg); // (userId, msg content)
+    });
 
     res.send('success');
 })
