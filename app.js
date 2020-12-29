@@ -143,7 +143,7 @@ app.get('/', (req, res) => {
     res.send('HelloWorld!');
 })
 
-app.listen(3000, () => {
+app.listen(3003, () => {
     console.log('[BOT已準備就緒]');
-    console.log('Server started on port 3000');
+    console.log('Server started on port 3003');
 });
