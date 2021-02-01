@@ -24,6 +24,19 @@ bot.on('follow', async (event) => {
     event.source.profile().then(function (profile) {
         console.log(profile);
 
+        axios.post('https://dadaeats.herokuapp.com/users/register', {
+            name: profile.displayName,
+            account: profile.userId,
+            password: profile.userId,
+            password2: profile.userId
+        })
+            .then(function (response) {
+                console.log('success');
+            })
+            .catch(function (error) {
+                console.log('error');
+            });
+
         // event.reply(`Hi, ${profile.displayName}，感謝將我加為好友!`);
 
         var replyMsg = {
@@ -70,7 +83,7 @@ bot.on('unfollow', async (event) => {
 // 被加入群組/聊天室
 bot.on('join', async (event) => {
     console.log(event);
-    // event.reply('感謝將我加入群組')
+    event.reply('感謝將我加入群組')
 })
 
 // 被踢出群組/聊天室
@@ -82,7 +95,7 @@ bot.on('leave', async (event) => {
 // 有人加入群組/聊天室
 bot.on('memberJoined', async (event) => {
     console.log(event);
-    // event.reply('歡迎加入群組 ^^')
+    event.reply('歡迎加入群組 ^^')
 })
 
 // 有人離開群組/聊天室
@@ -95,13 +108,62 @@ bot.on('memberLeft', async (event) => {
 bot.on('message', function (event) {
     // event.message.text是使用者傳給bot的訊息 
     var userText = event.message.text;
-
-    if (userText.indexOf("牛") != -1) { // 字串包含"牛"
-        var replyMsg = {}
-
-        event.reply(replyMsg);
+    if (userText == 'text') {
+        // 準備要回傳的內容 
+        // var replyMsg = `Hello你剛才說的是:${event.message.text}`; 
+        var replyMsg = {
+            type: 'text',
+            text: `Hihi你剛才說的是:${event.message.text}`
+        }
+        // 透過event.reply(要回傳的訊息)方法將訊息回傳給使用者 
+        event.reply(replyMsg).then(function (data) {
+            // 當訊息成功回傳後的處理 
+        }).catch(function (error) {
+            // 當訊息回傳失敗後的處理 
+        });
+    } else if (userText == 'sticker') {
+        var replyMsg = {
+            type: 'sticker',
+            packageId: '1',
+            stickerId: '3'
+        }
+        // 透過event.reply(要回傳的訊息)方法將訊息回傳給使用者 
+        event.reply(replyMsg).then(function (data) {
+            // 當訊息成功回傳後的處理 
+        }).catch(function (error) {
+            // 當訊息回傳失敗後的處理 
+        });
+    } else if (userText == 'template') {
+        var replyMsg = {
+            "type": "template",
+            "altText": "this is a buttons template",
+            "template": {
+                "type": "buttons",
+                "thumbnailImageUrl": "https://www.cosmopolitan.com.hk/var/cosmopolitanhk/storage/images/entertainment/gakki/1/1746435-1-chi-HK/1_img_750_h.jpg",
+                "imageBackgroundColor": "#F7F7F7",
+                "title": "♪★♫❣☆♣",
+                "text": "text",
+                "actions": [
+                    {
+                        "type": "uri",
+                        "label": "前往 DadaEats",
+                        "uri": "https://liff.line.me/1654985474-1K5daZn5"
+                    },
+                    {
+                        "type": "uri",
+                        "label": "查看購物車",
+                        "uri": "https://liff.line.me/1654985474-wErn6kGr"
+                    }
+                ]
+            }
+        }
+        // 透過event.reply(要回傳的訊息)方法將訊息回傳給使用者 
+        event.reply(replyMsg).then(function (data) {
+            // 當訊息成功回傳後的處理 
+        }).catch(function (error) {
+            // 當訊息回傳失敗後的處理 
+        });
     }
-    
 });
 
 // 推播
