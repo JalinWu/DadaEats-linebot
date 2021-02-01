@@ -7,15 +7,14 @@ const linebot = require('linebot');
 
 const channelData = require('./config/config').channelData;
 
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
+
 // 用於辨識Line Channel的資訊
 const bot = linebot(channelData);
 const linebotParser = bot.parser();
-
-// parse application/x-www-form-urlencoded
-// app.use(bodyParser.urlencoded({ extended: false }))
-
-// parse application/json
-// app.use(bodyParser.json())
 
 // 被加入好友
 bot.on('follow', async (event) => {
@@ -168,7 +167,7 @@ bot.on('message', function (event) {
 });
 
 // 推播
-app.post('/pushMsg', (req, res) => { // 目前無法使用，body-parser cannot use
+app.post('/pushMsg', (req, res) => { // 目前無法使用，body-parser cannot use，已解
     const { userIds, msg } = req.body;
 
     userIds.forEach(userId => {
